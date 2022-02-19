@@ -25,11 +25,17 @@ import java.util.Map;
 public class TagPrinter extends FileTagPrinter {
     
     private Map<String, PrintStream> map = new HashMap();
+    private String ext = ".md";
 
     public TagPrinter(Path storeDir) {
         super(storeDir);
     }
 
+    public TagPrinter(Path storeDir, String ext) {
+        super(storeDir);
+        this.ext = ext;
+    }
+    
     @Override
     public synchronized PrintStream getPrintStream(String tag) {
         PrintStream ps = map.get(tag);
@@ -51,7 +57,7 @@ public class TagPrinter extends FileTagPrinter {
     }
     
     protected File getFileByTag(String tag) {
-        return new File(storeDir.toFile(), tag + ".md");
+        return new File(storeDir.toFile(), tag + this.ext);
     }
 
     @Override

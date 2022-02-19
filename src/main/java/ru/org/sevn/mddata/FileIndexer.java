@@ -40,6 +40,10 @@ public class FileIndexer {
         indexIt(this.dirRoot);
     }
     
+    public Map<String, List<ItemInfo>> getTagItem() {
+        return tagItem;
+    }
+    
     private void indexIt(final File dir) throws Exception {
         File idx = new File(dir, "index.md");
         if (idx.exists() && dir.getName().length() == 6) {
@@ -79,71 +83,4 @@ public class FileIndexer {
             }
         }
     }
-    
-    private void printTitle(PrintStream out, String t) {
-        out.printf("\n## %s\n\n", t);
-    }
-    
-    private void printItem(PrintStream out, Path storeDir, ItemInfo ii) {
-        Path contentDir = Paths.get(ii.getPath()).getParent();
-        out.printf("```%s``` %s ", storeDir.relativize(contentDir), ii.getTitle());
-        if (ii.getUrl() != null && ii.getUrl().length() > 0) {
-            out.printf("[%s](%s) ", "url", ii.getUrl());
-        }
-
-        if (ii.getContent() != null && ii.getContent().length() > 0) {
-            Path content = contentDir.resolve(ii.getContent());
-
-            out.printf("[%s](%s)", "💾", storeDir.relativize(content));
-        }
-        out.println("  ");
-    }
-    
-    private void printTag(String t, PrintStream out, Path storeDir) {
-
-        List<ItemInfo> lii = tagItem.get(t);
-        lii.sort((e1, e2) -> {
-            return e1.getTitle().compareTo(e2.getTitle());
-        });
-        printTitle(out, t);
-        lii.forEach(ii -> {
-            printItem(out, storeDir, ii);
-        });
-    }
-    
-    private void printTags(Printer printer) {
-        TreeSet<String> ts = new TreeSet(this.tagItem.keySet());
-        ts.forEach(t -> {
-            try {
-                final PrintStream out = printer.getPrintStream(t);
-                final Path storeDir = printer.getStoreDir(t);
-                printTag(t, out, storeDir);
-            } finally {
-                printer.end(t);
-            }
-        });
-    }
-    private void printDates(Printer printer) {
-        String t = "By dates";
-        try {
-            final PrintStream out = printer.getPrintStream(t);
-            final Path storeDir = printer.getStoreDir(t);
-            printTitle(out, t);
-
-            this.tagItem.values().stream().flatMap(e -> e.stream()).distinct().sorted((e1, e2) -> {
-                long res = (e2.getDate().getTime() - e1.getDate().getTime());
-                return (res == 0) ? 0 : (res > 0) ? 1 : -1;
-            }).forEach(ii -> {
-                printItem(out, storeDir, ii);
-            });
-        } finally {
-            printer.end(t);
-        }
-    }
-    
-    public void printIt(Printer printer) {
-        printTags(printer);
-        printDates(printer);
-    }
-    
 }

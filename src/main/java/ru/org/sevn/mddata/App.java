@@ -30,6 +30,6 @@ public class App {
     public static void run (File dir, FileTagPrinter tagPrinter) throws Exception {
         FileIndexer fi = new FileIndexer(dir);
         fi.indexIt();
-        fi.printIt(tagPrinter);
+        new DocPrinter().init(fi.getTagItem()).printIt(tagPrinter);
     }
 }
