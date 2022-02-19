@@ -22,21 +22,19 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TagPrinter implements Printer {
+public class TagPrinter extends FileTagPrinter {
     
-    private final Path storeDir;
     private Map<String, PrintStream> map = new HashMap();
 
     public TagPrinter(Path storeDir) {
-        this.storeDir = storeDir;
-        this.storeDir.toFile().mkdirs();
+        super(storeDir);
     }
 
     @Override
     public synchronized PrintStream getPrintStream(String tag) {
         PrintStream ps = map.get(tag);
         if (ps == null) {
-            File fl = new File(storeDir.toFile(), tag + ".md");
+            File fl = getFileByTag(tag);
             try {
                 System.err.println("Open file " + fl.getCanonicalPath());
             } catch (IOException ex) {
@@ -50,6 +48,10 @@ public class TagPrinter implements Printer {
             }
         }
         return ps;
+    }
+    
+    protected File getFileByTag(String tag) {
+        return new File(storeDir.toFile(), tag + ".md");
     }
 
     @Override

@@ -15,21 +15,18 @@
  */
 package ru.org.sevn.mddata;
 
-import java.io.File;
+import java.nio.file.Path;
 
-public class App {
-        
-    public static void run(File dir, File outDir) throws Exception {
-        run(dir, new TagPrinter(outDir.toPath()));
-    }
+/**
+ *
+ * @author Veronica Anokhina
+ */
+public abstract class FileTagPrinter implements Printer {
     
-    public static void runHtml(File dir, File outDir) throws Exception {
-        run(dir, new HtmlTagPrinter(outDir.toPath()));
-    }
+    protected final Path storeDir;
     
-    public static void run (File dir, FileTagPrinter tagPrinter) throws Exception {
-        FileIndexer fi = new FileIndexer(dir);
-        fi.indexIt();
-        fi.printIt(tagPrinter);
+    public FileTagPrinter(Path storeDir) {
+        this.storeDir = storeDir;
+        this.storeDir.toFile().mkdirs();
     }
 }
