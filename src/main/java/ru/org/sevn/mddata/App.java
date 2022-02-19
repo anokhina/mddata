@@ -27,9 +27,11 @@ public class App {
         run(dir, new HtmlTagPrinter(outDir.toPath()));
     }
     
-    public static void run (File dir, FileTagPrinter tagPrinter) throws Exception {
+    public static void run (File dir, FileTagPrinter ... tagPrinters) throws Exception {
         FileIndexer fi = new FileIndexer(dir);
         fi.indexIt();
-        new DocPrinter().init(fi.getTagItem()).printIt(tagPrinter);
+        for (FileTagPrinter tagPrinter : tagPrinters) {
+            new DocPrinter().init(fi.getTagItem()).printIt(tagPrinter);
+        }
     }
 }
