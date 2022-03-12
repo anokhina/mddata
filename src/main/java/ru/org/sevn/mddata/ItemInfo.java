@@ -31,6 +31,7 @@ public class ItemInfo {
     private boolean indexed;
     private boolean changed;
     private Date date;
+    private Long contentSize;
 
     public String getTitle() {
         return title;
@@ -132,6 +133,14 @@ public class ItemInfo {
     public ItemInfo setPath(String path) {
         this.path = path;
         return this;
+    }
+
+    public Long getContentSize() {
+        return contentSize;
+    }
+
+    public void setContentSize(Long contentSize) {
+        this.contentSize = contentSize;
     }
     
 }

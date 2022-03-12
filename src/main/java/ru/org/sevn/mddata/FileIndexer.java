@@ -54,6 +54,12 @@ public class FileIndexer {
                 final Node doc = MdFileParser.parse(src);
                 ItemInfoBuilder iib = new ItemInfoBuilder(new ItemInfo().setPath(filePath.toString()));
                 ItemInfo ii = iib.fromNode(doc);
+                if (ii.getContent() != null) {
+                    final File cf = new File(filePath.toFile().getParentFile(), ii.getContent());
+                    if (cf.exists()) {
+                        ii.setContentSize(cf.length());
+                    }
+                }
                 iib.getObject().getTags().forEach(t -> {
                     List<ItemInfo> lii = tagItem.get(t);
                     if (lii == null) {

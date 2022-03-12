@@ -51,8 +51,16 @@ public class DocPrinterBasic {
         out.printf("[%s](%s)", "💾", storeDir.relativize(content));
     }
     
+    protected void printItemImg(PrintStream out, Path storeDir, Path content) {
+        if (content.toFile().exists()) {
+            Path imgSrc = storeDir.relativize(content);
+            out.printf("\n[<img src=\"%s\" width=\"150\"/>](%s) ", imgSrc, imgSrc);
+        }
+    }
+    
     protected void printItem(PrintStream out, Path storeDir, ItemInfo ii) {
         Path contentDir = Paths.get(ii.getPath()).getParent();
+        printItemImg(out, storeDir, contentDir.resolve("img.png"));
         printItemTitle(out, storeDir, ii, contentDir);
         if (ii.getUrl() != null && ii.getUrl().length() > 0) {
             printItemUrl(out, ii);

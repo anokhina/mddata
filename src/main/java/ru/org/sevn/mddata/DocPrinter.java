@@ -24,9 +24,38 @@ import java.nio.file.Path;
  */
 public class DocPrinter extends DocPrinterBasic {
     
+    private String lev(int lev) {
+        switch(lev) {
+            case 0:
+                return "b";
+            case 1:
+                return "Kb";
+            case 2:
+                return "Mb";
+            case 3:
+                return "Gb";
+            case 4:
+                return "Tb";
+        }
+        return "" + lev;
+    }
+    
+    private String sz(long l, int powl, int lev) {
+        int pown = powl * 1024;
+        if (l / pown > 0) {
+            return sz(l, pown, lev + 1);
+        } else {
+            if (lev > 1) {
+                return Math.round((((double)l) / powl) * 10) / 10.0 + " " + lev(lev - 1);
+            } else {
+                return l + " " + lev(lev - 1);
+            }
+        }
+    }
+    
     @Override
     protected void printItemTitle(PrintStream out, Path storeDir, ItemInfo ii, Path contentDir) {
-        out.printf("\n%s  \n %s ", ii.getContent() == null ? "" : ii.getContent(), ii.getTitle());
+        out.printf("\n%s  %d %s \n %s ", ii.getContent() == null ? "" : ii.getContent(), ii.getContentSize(), sz(ii.getContentSize(), 1, 1), ii.getTitle());
     }
     
     @Override

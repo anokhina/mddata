@@ -1,8 +1,9 @@
-from tkinter import *  
+import tkinter as tk
 import subprocess  
 import shlex
 import os
 from datetime import datetime
+import urllib.parse
 
 #JavaScript
   
@@ -53,15 +54,15 @@ def saveForm():
     content = txtContent.get()
     contentStr = content
     if (len(content) > 0):
-        contentStr = "[{}]({})".format(content, content)
+        contentStr = "[{}]({})".format(content.replace('[','').replace(']',''), urllib.parse.quote_plus(content))
 
     url=txtUrl.get()
     urlStr = url
     if (len(url) > 0):
         urlStr = "[{}]({})".format(url, url)
     
-    tags=txtTags.get()
-    tagsArr = tags.split()
+    tagsArr = [txtTags.get(idx) for idx in txtTags.curselection()]
+    
     tagsArrLen = len(tagsArr)
     for i in range(tagsArrLen):
         tagsArr[i] = "- " + tagsArr[i] + "  "
@@ -70,7 +71,7 @@ def saveForm():
 
     title=txtTitle.get()
     author=txtAuthor.get()
-    dsc=txtDescription.get("1.0", END)
+    dsc=txtDescription.get("1.0", tk.END)
     cmdName="dolphin"
     lblResult.configure(text=outFile)  
     #dolphin $ndir
@@ -86,66 +87,88 @@ def saveForm():
     f = open(outFile, "w")
     f.write(templ.format(title = title, author = author, description = dsc, tags = tagsStr, url = urlStr, content = contentStr, date = date))
     f.close()
-    subprocess.run(cmdarr)
+    #subprocess.run(cmdarr)
   
 def clearForm():
-    txtUrl.delete(0, END)
-    txtContent.delete(0, END)
-    txtTags.delete(0, END)
-    txtTitle.delete(0, END)
-    txtAuthor.delete(0, END)
-    txtDescription.delete("1.0", END)
+    txtUrl.delete(0, tk.END)
+    txtContent.delete(0, tk.END)
+    txtTags.delete(0, tk.END)
+    txtTitle.delete(0, tk.END)
+    txtAuthor.delete(0, tk.END)
+    txtDescription.delete("1.0", tk.END)
 
-window = Tk()  
+window = tk.Tk()  
 window.title("Создать описание ссылки или файла")  
-window.geometry('1024x400')
+window.geometry('1024x800')
 
 wd = 40
 
 row = 0
-lblUrl = Label(window, text="Url")
+lblUrl = tk.Label(window, text="Url")
 lblUrl.grid(column=0, row=row)  
-txtUrl = Entry(window,width=wd)  
+txtUrl = tk.Entry(window,width=wd)  
 txtUrl.grid(column=1, row=row)  
 
 row += 1
-lblContent = Label(window, text="Content filename")
+lblContent = tk.Label(window, text="Content filename")
 lblContent.grid(column=0, row=row)  
-txtContent = Entry(window,width=wd)  
+txtContent = tk.Entry(window,width=wd)  
 txtContent.grid(column=1, row=row)  
 
 row += 1
-lblTags = Label(window, text="Tags (space separated)")
+
+lblTags = tk.Label(window, text="Tags (space separated)")
 lblTags.grid(column=0, row=row)  
-txtTags = Entry(window,width=wd)  
+txtTags = tk.Listbox(window, width=wd, selectmode="extended")
 txtTags.grid(column=1, row=row)  
+for i in ("css", 
+    "dog", 
+    "git", 
+    "html", 
+    "Java", 
+    "JavaScript", 
+    "music", 
+    "node", 
+    "patterns", 
+    "programming", 
+    "React", 
+    "TypeScript", 
+    "география", 
+    "музыка", 
+    "физика", 
+    "флейта", 
+    "фортепиано", 
+    "химия", 
+    "школа", 
+    "экономика"):
+    txtTags.insert(tk.END, i)
 
 row += 1
-lblTitle = Label(window, text="Title")
+lblTitle = tk.Label(window, text="Title")
 lblTitle.grid(column=0, row=row)  
-txtTitle = Entry(window,width=wd)  
+txtTitle = tk.Entry(window,width=wd)  
 txtTitle.grid(column=1, row=row)  
 
 row += 1
-lblAuthor = Label(window, text="Author")
+lblAuthor = tk.Label(window, text="Author")
 lblAuthor.grid(column=0, row=row)  
-txtAuthor = Entry(window,width=wd)  
+txtAuthor = tk.Entry(window,width=wd)  
 txtAuthor.grid(column=1, row=row)  
 
 row += 1
-lblDescription = Label(window, text="Description")
+lblDescription = tk.Label(window, text="Description")
 lblDescription.grid(column=0, row=row)  
-txtDescription = Text(window, height=8)  
+txtDescription = tk.Text(window, height=8)  
 txtDescription.grid(column=1, row=row)  
 
 row += 1
-lblResult = Label(window, text="Result")
+lblResult = tk.Label(window, text="Result")
 lblResult.grid(column=1, row=row)  
 
 row += 1
-btnClear = Button(window, text="Clear", command=clearForm)  
+btnClear = tk.Button(window, text="Clear", command=clearForm)  
 btnClear.grid(column=0, row=row)  
-btnSave = Button(window, text="Save", command=saveForm)  
+btnSave = tk.Button(window, text="Save", command=saveForm)  
 btnSave.grid(column=1, row=row)  
 
 window.mainloop()

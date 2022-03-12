@@ -20,6 +20,7 @@ import com.vladsch.flexmark.ast.Heading;
 import com.vladsch.flexmark.ast.Paragraph;
 import com.vladsch.flexmark.ast.Reference;
 import com.vladsch.flexmark.util.ast.Node;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
@@ -54,7 +55,9 @@ public class ItemInfoBuilder {
                 case "url":
                     return ii.setUrl(p.getValue());
                 case "content":
-                    return ii.setContent(p.getValue());
+                    if (p.getValue() != null) {
+                        return ii.setContent(URLDecoder.decode(p.getValue(), "UTF-8"));
+                    }
                 case "indexed":
                     return ii.setIndexed(Boolean.valueOf(p.getValue()));
                 case "changed":
