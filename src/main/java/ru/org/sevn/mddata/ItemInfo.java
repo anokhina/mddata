@@ -15,8 +15,12 @@
  */
 package ru.org.sevn.mddata;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ItemInfo {
@@ -27,11 +31,11 @@ public class ItemInfo {
     private Set<String> tags = new HashSet();
     private String img;
     private String url;
-    private String content;
+    private List<String> content = new ArrayList();
     private boolean indexed;
     private boolean changed;
     private Date date;
-    private Long contentSize;
+    private Map<String, Long> contentSize = new HashMap();
 
     public String getTitle() {
         return title;
@@ -90,12 +94,18 @@ public class ItemInfo {
         return this;
     }
 
-    public String getContent() {
+    public boolean isContentEmpty() {
+        return this.content.size() == 0;
+    }
+    
+    public List<String> getContent() {
         return content;
     }
 
-    public ItemInfo setContent(String content) {
-        this.content = content;
+    public ItemInfo addContent(String content) {
+        if (content.trim().length() > 0) {
+            this.content.add(content);
+        }
         return this;
     }
 
@@ -135,12 +145,12 @@ public class ItemInfo {
         return this;
     }
 
-    public Long getContentSize() {
-        return contentSize;
+    public Long getContentSize(String content) {
+        return contentSize.get(content);
     }
 
-    public void setContentSize(Long contentSize) {
-        this.contentSize = contentSize;
+    public void addContentSize(String content, Long contentSize) {
+        this.contentSize.put(content, contentSize);
     }
     
 }

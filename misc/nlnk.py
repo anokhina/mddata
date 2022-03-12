@@ -1,3 +1,4 @@
+from pickle import TRUE
 import tkinter as tk
 import subprocess  
 import shlex
@@ -32,13 +33,17 @@ TEMPL = """
 [//]: # (url)
 {url}
 
-[//]: # (content)
 {content}
 
 [//]: # (indexed=false)
 [//]: # (changed=false)
 [//]: # (date={date})
 [//]: # (date +%F_%T)
+"""
+
+TEMPL_CONTENT = """
+[//]: # (content)
+{content}
 """
 
 def saveForm():  
@@ -48,14 +53,16 @@ def saveForm():
     ndird = time.strftime("%Y%m/%d")
     hms = time.strftime("%H%M%S")
     ndir = ndird + "/" + hms
-    os.makedirs(ndir, exist_ok=True)
     outFile = ndir + "/index.md"
 
-    content = txtContent.get()
-    contentStr = content
-    if (len(content) > 0):
-        contentStr = "[{}]({})".format(content.replace('[','').replace(']',''), urllib.parse.quote_plus(content))
+    contentText = txtContent.get("1.0", tk.END)
 
+    contentStr = ""
+    for content in contentText.split("\n"):
+        if (len(content) > 0):
+            cnt = "[{}]({})".format(content.replace('[','').replace(']',''), urllib.parse.quote(content))
+            contentStr = contentStr + TEMPL_CONTENT.format(content=cnt)
+    
     url=txtUrl.get()
     urlStr = url
     if (len(url) > 0):
@@ -82,17 +89,22 @@ def saveForm():
     print(cmdarr)
     ##subprocess.run(["ls", "-l"])
     templ = TEMPL
-    #print(templ.format(title = title, author = author, description = dsc, tags = tagsStr, url = urlStr, content = contentStr, date = date))
     print(outFile)
-    f = open(outFile, "w")
-    f.write(templ.format(title = title, author = author, description = dsc, tags = tagsStr, url = urlStr, content = contentStr, date = date))
-    f.close()
-    #subprocess.run(cmdarr)
+    doPrint = True;
+    if (doPrint):
+        os.makedirs(ndir, exist_ok=True)
+        f = open(outFile, "w")
+        f.write(templ.format(title = title, author = author, description = dsc, tags = tagsStr, url = urlStr, content = contentStr, date = date))
+        f.close()
+        subprocess.run(cmdarr)
+    else:
+        print(templ.format(title = title, author = author, description = dsc, tags = tagsStr, url = urlStr, content = contentStr, date = date))
+
   
 def clearForm():
     txtUrl.delete(0, tk.END)
     txtContent.delete(0, tk.END)
-    txtTags.delete(0, tk.END)
+    txtTags.selection_clear(0, tk.END)
     txtTitle.delete(0, tk.END)
     txtAuthor.delete(0, tk.END)
     txtDescription.delete("1.0", tk.END)
@@ -112,7 +124,7 @@ txtUrl.grid(column=1, row=row)
 row += 1
 lblContent = tk.Label(window, text="Content filename")
 lblContent.grid(column=0, row=row)  
-txtContent = tk.Entry(window,width=wd)  
+txtContent = tk.Text(window, height=8)  
 txtContent.grid(column=1, row=row)  
 
 row += 1
@@ -124,6 +136,7 @@ txtTags.grid(column=1, row=row)
 for i in ("css", 
     "dog", 
     "git", 
+    "hacking",
     "html", 
     "Java", 
     "JavaScript", 

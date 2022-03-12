@@ -44,17 +44,17 @@ public class DocPrinterBasic {
     }
     
     protected void printItemUrl(PrintStream out, ItemInfo ii) {
-        out.printf("[%s](%s) ", "url", ii.getUrl());
+        out.printf("[%s](%s)  ", "url", ii.getUrl());
     }
     
     protected void printItemContent(PrintStream out, Path storeDir, Path content) {
-        out.printf("[%s](%s)", "💾", storeDir.relativize(content));
+        out.printf("[%s](%s)  ", "💾", storeDir.relativize(content));
     }
     
     protected void printItemImg(PrintStream out, Path storeDir, Path content) {
         if (content.toFile().exists()) {
             Path imgSrc = storeDir.relativize(content);
-            out.printf("\n[<img src=\"%s\" width=\"150\"/>](%s) ", imgSrc, imgSrc);
+            out.printf("\n[<img src=\"%s\" width=\"150\"/>](%s)  ", imgSrc, imgSrc);
         }
     }
     
@@ -66,9 +66,11 @@ public class DocPrinterBasic {
             printItemUrl(out, ii);
         }
 
-        if (ii.getContent() != null && ii.getContent().length() > 0) {
-            Path content = contentDir.resolve(ii.getContent());
-            printItemContent(out, storeDir, content);
+        if (!ii.isContentEmpty()) {
+            for (String c : ii.getContent()) {
+                Path content = contentDir.resolve(c);
+                printItemContent(out, storeDir, content);
+            }
         }
         out.println("  ");
     }

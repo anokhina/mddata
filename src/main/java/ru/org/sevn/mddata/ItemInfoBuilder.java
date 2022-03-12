@@ -56,7 +56,7 @@ public class ItemInfoBuilder {
                     return ii.setUrl(p.getValue());
                 case "content":
                     if (p.getValue() != null) {
-                        return ii.setContent(URLDecoder.decode(p.getValue(), "UTF-8"));
+                        return ii.addContent(URLDecoder.decode(p.getValue(), "UTF-8"));
                     }
                 case "indexed":
                     return ii.setIndexed(Boolean.valueOf(p.getValue()));

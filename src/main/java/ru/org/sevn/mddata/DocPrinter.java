@@ -55,17 +55,28 @@ public class DocPrinter extends DocPrinterBasic {
     
     @Override
     protected void printItemTitle(PrintStream out, Path storeDir, ItemInfo ii, Path contentDir) {
-        out.printf("\n%s  %d %s \n %s ", ii.getContent() == null ? "" : ii.getContent(), ii.getContentSize(), sz(ii.getContentSize(), 1, 1), ii.getTitle());
+        if (ii.isContentEmpty()) {
+            
+        } else {
+            for (String c : ii.getContent()) {
+                Long csz = ii.getContentSize(c);
+                if (csz == null) {
+                    csz = 0L;
+                }
+                out.printf("\n%s  %d %s  ", c, csz, sz(csz, 1, 1));
+            }
+        }
+        out.printf("\n %s ", ii.getTitle());
     }
     
     @Override
     protected void printItemUrl(PrintStream out, ItemInfo ii) {
-        out.printf("[%s](%s) ", "url", ii.getUrl());
+        out.printf("[%s](%s)  ", "url", ii.getUrl());
     }
     
     @Override
     protected void printItemContent(PrintStream out, Path storeDir, Path content) {
-        out.printf("[%s](%s)", "💾", storeDir.relativize(content));
+        out.printf("[%s](%s)  ", "💾", storeDir.relativize(content));
     }
     
 }

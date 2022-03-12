@@ -54,10 +54,13 @@ public class FileIndexer {
                 final Node doc = MdFileParser.parse(src);
                 ItemInfoBuilder iib = new ItemInfoBuilder(new ItemInfo().setPath(filePath.toString()));
                 ItemInfo ii = iib.fromNode(doc);
-                if (ii.getContent() != null) {
-                    final File cf = new File(filePath.toFile().getParentFile(), ii.getContent());
-                    if (cf.exists()) {
-                        ii.setContentSize(cf.length());
+                if (!ii.isContentEmpty()) {
+                    
+                    for (String c : ii.getContent()) {
+                        final File cf = new File(filePath.toFile().getParentFile(), c);
+                        if (cf.exists()) {
+                            ii.addContentSize(c, cf.length());
+                        }
                     }
                 }
                 iib.getObject().getTags().forEach(t -> {
@@ -69,7 +72,7 @@ public class FileIndexer {
                     lii.add(ii);
                 });
                 if ( (ii.getUrl() == null || ii.getUrl().trim().length() == 0) ||
-                        (ii.getContent() == null || ii.getContent().trim().length() == 0)
+                        (ii.isContentEmpty())
                         ) {
                 } else {
                     MdFileParser.ast(doc);
